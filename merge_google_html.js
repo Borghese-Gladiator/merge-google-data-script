@@ -1,3 +1,5 @@
+global.logLevel = "error";
+
 // IMPORTS
 const fs = require('fs');
 const path = require('path');
@@ -21,29 +23,34 @@ commander
   .parse(process.argv);
 const options = commander.opts();
 const { filename_prefix: prefix, path: customPath } = options;
-console.log('options', prefix, customPath);
+console.info('options', prefix, customPath);
 
 // Get list of HTML files to combine
 const dataDir = customPath ?? __dirname;
-console.log('names', fs.readdirSync(dataDir));
+console.info('names', fs.readdirSync(dataDir));
 const files = fs.readdirSync(dataDir)
   .filter(fn => fn.endsWith('.html'))
   .filter(fn => fn.startsWith(prefix ?? ''));
-console.log('files', files);
+console.info('files', files);
 
 // Combine contents of Google Voice HTML files
 const htmlOutput = new JSDOM("<!doctype html>");
 const document = htmlOutput.window.document;
 const divElem = document.createElement('div');
-for (const file of files) {
+const styles = document.createElement("styles");
+for (const [index, file] of files.entries()) {
   const htmlContent = fs.readFileSync(path.resolve(dataDir, file), { encoding: 'utf8' });
   const dom = new JSDOM(htmlContent);
-  const smsContainerElem = dom.window.document.querySelector('.hChatLog')
-  divElem.innerHTML += smsContainerElem.innerHTML
-  // document.appendChild(smsContainerElem.innerHTML);
+  const smsContainerElem = dom.window.document.querySelector('.hChatLog');
+  divElem.innerHTML += smsContainerElem.innerHTML;
+  if (index === 0)
+    styles.innerHTML = dom.window.document.getElementsByTagName('style')[0].innerHTML;
 }
-divElem.className = "hChatLog hfeed"
+divElem.className = "hChatLog hfeed";
+document.head.appendChild(styles);
 document.body.appendChild(divElem);
 
 // Save HTML file
-fs.writeFileSync(path.resolve(__dirname, "output", "output.html"), htmlOutput.serialize());
+const outputPath = path.resolve(__dirname, "output", "output.html");
+fs.writeFileSync(outputPath, htmlOutput.serialize(), { flag:'w' });
+console.info(`DONE! Output written to ${outputPath}`);
