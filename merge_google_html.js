@@ -1,14 +1,11 @@
-/*
-- input
-  - file name prefix
-  - path to find files
-- output
-  - TXT file with all text messages
-*/
+// IMPORTS
 const fs = require('fs');
 const path = require('path');
-const jsdom = require('jsdom');
+const { JSDOM } = require('jsdom');
 const commander = require('commander');
+
+// UTILS
+const getFilename = (file) => path.parse(file).name;
 
 // DEFAULTS
 const { dir: absPathDir, name: dirName } = path.parse(String.raw`C:\Users\Timot\Downloads\takeout-20230506T180703Z-001\Takeout\Voice\Calls`)
@@ -19,15 +16,11 @@ const defaultFilenamePrefix = '';
 commander
   .version('1.0.0', '-v, --version')
   .usage('[OPTIONS]...')
-  .option('-fp, --filename_prefix', 'Detects if the file prefix is present.')
-  .option('-p, --path', 'Detects if custom path is present.')
-  .action((args, cmd) => {
-    cmd.filenamePrefix = cmd.filenamePrefix ?? defaultFilenamePrefix;
-    cmd.path = cmd.path ?? defaultPath;
-  })
+  .option('-fp, --filename_prefix [prefix]', 'Detects if the file prefix is present.', defaultFilenamePrefix)
+  .option('-p, --path', 'Detects if custom path is present.', defaultPath)
   .parse(process.argv);
 const options = commander.opts();
-const { prefix, path: customPath } = options;
+const { filename_prefix: prefix, path: customPath } = options;
 console.log('options', prefix, customPath);
 
 // Get list of HTML files to combine
@@ -39,14 +32,18 @@ const files = fs.readdirSync(dataDir)
 console.log('files', files);
 
 // Combine contents of Google Voice HTML files
-const totalBody = [];
+const htmlOutput = new JSDOM("<!doctype html>");
+const document = htmlOutput.window.document;
+const divElem = document.createElement('div');
 for (const file of files) {
-  const htmlContent = fs.readFile(path.resolve(dataDir, file), 'UTF-8', callback);
+  const htmlContent = fs.readFileSync(path.resolve(dataDir, file), { encoding: 'utf8' });
   const dom = new JSDOM(htmlContent);
-  const document = dom.window.document;
-  console.error('document', document);
+  const smsContainerElem = dom.window.document.querySelector('.hChatLog')
+  divElem.innerHTML += smsContainerElem.innerHTML
+  // document.appendChild(smsContainerElem.innerHTML);
 }
-// hChatLog hfeed
+divElem.className = "hChatLog hfeed"
+document.body.appendChild(divElem);
 
-// UTILS  
-const getFilename = (file) => path.parse(file).name;
+// Save HTML file
+fs.writeFileSync(path.resolve(__dirname, "output", "output.html"), htmlOutput.serialize());
