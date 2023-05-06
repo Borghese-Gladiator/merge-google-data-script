@@ -37,13 +37,14 @@ console.info('files', files);
 const htmlOutput = new JSDOM("<!doctype html>");
 const document = htmlOutput.window.document;
 const divElem = document.createElement('div');
-const styles = document.createElement("styles");
+const styles = document.createElement("style");
 for (const [index, file] of files.entries()) {
   const htmlContent = fs.readFileSync(path.resolve(dataDir, file), { encoding: 'utf8' });
   const dom = new JSDOM(htmlContent);
   const smsContainerElem = dom.window.document.querySelector('.hChatLog');
   divElem.innerHTML += smsContainerElem.innerHTML;
   if (index === 0)
+    styles.type = 'text/css';
     styles.innerHTML = dom.window.document.getElementsByTagName('style')[0].innerHTML;
 }
 divElem.className = "hChatLog hfeed";
