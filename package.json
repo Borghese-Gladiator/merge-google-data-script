@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "commander": "^10.0.1"
+    "commander": "^10.0.1",
+    "jsdom": "^22.0.0"
   }
 }

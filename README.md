@@ -3,5 +3,5 @@
     - file name prefix
     - path to find files
   - output
-    - TXT file with all text messages
+    - HTML file with all text messages
   
