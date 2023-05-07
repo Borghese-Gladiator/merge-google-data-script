@@ -19,8 +19,10 @@ const getChatsFromXML = (absPath) => {
   // Parses XML text message backup from "SMS Backup & Restore" in Google Playstore
   const xmlContent = fs.readFileSync(absPath, { encoding: 'utf8' });
   const dom = new JSDOM(xmlContent);
-  const xmlDocument = dom.window.DOMParser.parseFromString(xmlContent, 'text/xml');
-  const smsesElem = dom.window.document.getElementsByTagName('smses');
+  const DOMParser = dom.window.DOMParser;
+  const parser = new DOMParser;
+  const document = parser.parseFromString(xmlContent, 'text/xml');
+  const smsesElem = document.getElementsByTagName('smses');
   console.log('smsesElem', smsesElem);
   return smsesElem.innerHTML;
   // <sms protocol="0" address="9173716758" date="1663991443700" type="2" subject="null" body="你好抒扬，&#10;这是Tim 施明君&#10;&#10;我们多找时间一起打羽毛球" toa="null" sc_toa="null" service_center="null" read="1" status="-1" locked="0" date_sent="0" sub_id="2" readable_date="Sep 23, 2022 11:50:43 PM" contact_name="ShuYang Wang" />
@@ -69,10 +71,10 @@ const divElem = document.createElement('div');
 const styleElem = document.createElement("style");
 for (const [index, file] of files.entries()) {
   const absPath = path.resolve(dataDir, file);
-  if (path.extname(file) === 'html') {
+  if (path.extname(file) === '.xml')
+    divElem.innerHTML += getChatsFromXML(absPath, divElem);
+  else
     divElem.innerHTML += getChatsFromHTML(absPath, divElem);
-  }
-  else divElem.innerHTML += getChatsFromXML(absPath, divElem);
 }
 styleElem.type = 'text/css';
 styleElem.innerHTML += getStyleFromHTML(path.resolve(dataDir, files[0]), styleElem);
