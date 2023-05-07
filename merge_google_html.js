@@ -101,7 +101,7 @@ const dataDir = dataDirPath ?? __dirname;
 const files = fs.readdirSync(dataDir)
   .filter(fn => fn.endsWith('.html'))
   .filter(fn => fn.startsWith(filenamePrefix ?? ''));
-files.push(extraFilename);
+files.unshift(extraFilename);
 console.info('files', files);
 
 // Combine contents of Google Voice HTML files
@@ -117,7 +117,7 @@ for (const [index, file] of files.entries()) {
     divElem.innerHTML += getChatsFromHTML(absPath, divElem);
 }
 styleElem.type = 'text/css';
-styleElem.innerHTML += getStyleFromHTML(path.resolve(dataDir, files[0]), styleElem);
+styleElem.innerHTML += getStyleFromHTML(path.resolve(dataDir, files[files.length - 1]), styleElem);
 divElem.className = "hChatLog hfeed";
 document.head.appendChild(styleElem);
 document.body.appendChild(divElem);
