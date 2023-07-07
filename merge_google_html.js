@@ -1,10 +1,18 @@
 /**
+ * DEFAULTS
+ */
+const defaultDataDirPath = path.resolve(String.raw`C:\Users\Timot\Downloads\takeout-20230506T180703Z-001\Takeout\Voice\Calls`);
+const defaultFilenamePrefix = '';
+const defaultExtraFilename = 'sms-20230506223117.xml'; // Created text message backup via "SMS Backup & Restore" from Google Playstore
+
+/**
  * IMPORTS
  */
 const fs = require('fs');
 const path = require('path');
-const { JSDOM } = require('jsdom');
+
 const commander = require('commander');
+const { JSDOM } = require('jsdom');
 
 /**
  * UTILS
@@ -30,14 +38,14 @@ const getChatsFromXML = (absPath) => {
   const htmlOutput = new JSDOM("<!doctype html>");
   const htmlDocument = htmlOutput.window.document;
   const divContainerElem = htmlDocument.createElement('div');
-  
+
   for (const smsElem of smsesElem) {
     // Load data from XML element
     const dateStr = smsElem.getAttribute('readable_date');
     const message = smsElem.getAttribute('body');
     const senderIsMe = smsElem.getAttribute('type') === 2;
     const contactName = smsElem.getAttribute('contact_name');
-    
+
     // Initialize elements
     const divElem = htmlDocument.createElement('div');
     divElem.className = 'message';
@@ -67,13 +75,6 @@ const getStyleFromHTML = (absPath) => {
   const dom = new JSDOM(htmlContent);
   return dom.window.document.getElementsByTagName('style')[0].innerHTML;
 }
-
-/**
- * DEFAULTS
- */
-const defaultDataDirPath = path.resolve(String.raw`C:\Users\Timot\Downloads\takeout-20230506T180703Z-001\Takeout\Voice\Calls`);
-const defaultFilenamePrefix = '';
-const defaultExtraFilename = 'sms-20230506223117.xml'; // Created text message backup via "SMS Backup & Restore" from Google Playstore
 
 /**
  * COMMAND LINE ARGUMENTS
