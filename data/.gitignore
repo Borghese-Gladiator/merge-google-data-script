@@ -1,0 +1,3 @@
+# Avoid committing sensitive data
+*.html
+*.xml
