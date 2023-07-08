@@ -20,8 +20,8 @@ const { JSDOM } = require('jsdom');
 /**
  * CONSTANTS
  */
-const DATA_HTML_PATH = path.join(__dirname, 'data', '5_7_2023_google_voice_messages.html');
-const OUTPUT_PATH = path.join(__dirname, 'output', '5_7_2023_google_voice_messages.csv');
+const DATA_HTML_PATH = path.join(__dirname, 'data', '7_7_2023_google_voice_messages.html');
+const OUTPUT_PATH = path.join(__dirname, 'output', '7_7_2023_google_voice_messages.csv');
 const SEPARATOR = ',';
 
 /**
@@ -38,12 +38,18 @@ for (const messageElem of messageElemList) {
   // `.text` does not show actual content for some reason
   // therefore, I used `.innerHTML` (possibly related to Chinese/Japanese characters)
   const messageTextElem = messageElem.getElementsByTagName('q')[0];
-  const message = messageTextElem.innerHTML.replace("<br>", "").replace(SEPARATOR, "");
+  const message = messageTextElem.innerHTML
+    .replace("<br>", "")
+    // account for XML text differences from Voice differences
+    .replace(",", "")
+    .replace(",", "");
 
   const dateElem = messageElem.getElementsByTagName('abbr')[0];
   const date = dateElem.innerHTML
     .replace("\nEastern Time", "")
-    .replace(SEPARATOR, ""); // account for XML text differences from Voice differences
+    // account for XML text differences from Voice differences
+    .replace(",", "")
+    .replace(",", "");
 
   const senderTextElem = messageElem.getElementsByClassName('fn')[0];
   const sender = senderTextElem.innerHTML;
