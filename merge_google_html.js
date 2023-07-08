@@ -19,6 +19,7 @@ const SMS_EXTRA_FILENAME = 'sms-20230506223117.xml';
 /**
  * COMMAND LINE ARGUMENTS
  */
+/*
 commander
   .version('1.0.0', '-v, --version')
   .usage('[OPTIONS]...')
@@ -33,6 +34,7 @@ const {
   extra_filename: extraFilename
 } = options;
 console.info('options', dataDirPath, filenamePrefix, extraFilename);
+*/
 
 
 /**
@@ -101,11 +103,11 @@ const getStyleFromHTML = (absPath) => {
  * SCRIPT BODY
  */
 // Get list of HTML files to combine
-const dataDir = dataDirPath ?? __dirname;
+const dataDir = DATA_DIR_PATH ?? __dirname;
 const files = fs.readdirSync(dataDir)
   .filter(fn => fn.endsWith('.html'))
-  .filter(fn => fn.startsWith(filenamePrefix ?? ''));
-files.unshift(extraFilename);
+  .filter(fn => fn.startsWith(FILENAME_PREFIX ?? ''));
+files.unshift(SMS_EXTRA_FILENAME);
 console.info('files', files);
 
 // Combine contents of Google Voice HTML files
