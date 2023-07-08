@@ -1,11 +1,4 @@
 /**
- * DEFAULTS
- */
-const defaultDataDirPath = path.resolve(String.raw`C:\Users\Timot\Downloads\takeout-20230506T180703Z-001\Takeout\Voice\Calls`);
-const defaultFilenamePrefix = '';
-const defaultExtraFilename = 'sms-20230506223117.xml'; // Created text message backup via "SMS Backup & Restore" from Google Playstore
-
-/**
  * IMPORTS
  */
 const fs = require('fs');
@@ -13,6 +6,34 @@ const path = require('path');
 
 const commander = require('commander');
 const { JSDOM } = require('jsdom');
+
+
+/**
+ * DEFAULTS
+ */
+const DATA_DIR_PATH = path.join(__dirname, 'data', 'Takeout', 'Voice', 'Calls');
+const FILENAME_PREFIX = '';
+// Created text message backup via "SMS Backup & Restore" from Google Playstore
+const SMS_EXTRA_FILENAME = 'sms-20230506223117.xml';
+
+/**
+ * COMMAND LINE ARGUMENTS
+ */
+commander
+  .version('1.0.0', '-v, --version')
+  .usage('[OPTIONS]...')
+  .option('-p, --path', 'Detects if data directory path is present.', DATA_DIR_PATH)
+  .option('-f, --filename_prefix [prefix]', 'Detects if the filename prefix is present.', FILENAME_PREFIX)
+  .option('-e, --extra_filename', 'Detects if extra file to include.', SMS_EXTRA_FILENAME)
+  .parse(process.argv);
+const options = commander.opts();
+const {
+  path: dataDirPath,
+  filename_prefix: filenamePrefix,
+  extra_filename: extraFilename
+} = options;
+console.info('options', dataDirPath, filenamePrefix, extraFilename);
+
 
 /**
  * UTILS
@@ -75,24 +96,6 @@ const getStyleFromHTML = (absPath) => {
   const dom = new JSDOM(htmlContent);
   return dom.window.document.getElementsByTagName('style')[0].innerHTML;
 }
-
-/**
- * COMMAND LINE ARGUMENTS
- */
-commander
-  .version('1.0.0', '-v, --version')
-  .usage('[OPTIONS]...')
-  .option('-p, --path', 'Detects if data directory path is present.', defaultDataDirPath)
-  .option('-f, --filename_prefix [prefix]', 'Detects if the filename prefix is present.', defaultFilenamePrefix)
-  .option('-e, --extra_filename', 'Detects if extra file to include.', defaultExtraFilename)
-  .parse(process.argv);
-const options = commander.opts();
-const {
-  path: dataDirPath,
-  filename_prefix: filenamePrefix,
-  extra_filename: extraFilename
-} = options;
-console.info('options', dataDirPath, filenamePrefix, extraFilename);
 
 /**
  * SCRIPT BODY
