@@ -1,3 +1,10 @@
+# Timeline of Chat Messages
+
+## Steps
+- `yarn create next-app --javascript --tailwind --eslint --no-app --src-dir --import-alias "@/*" --use-yarn next-badminton-strategy`
+- `yarn add flowbite`
+
+# Next.js README
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
